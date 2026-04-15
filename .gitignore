@@ -1,0 +1,30 @@
+# generated/
+# Uncomment below to ignore generated code (recommended for large teams)
+# generated/proto/
+# generated/orm/
+
+# Binaries
+bin/
+*.exe
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+vendor/
+
+# Docker
+docker-compose.override.yml
+
+# Env
+.env
+.env.local

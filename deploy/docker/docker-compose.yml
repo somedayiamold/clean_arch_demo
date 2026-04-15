@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+  # ====== Infrastructure ======
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+      MYSQL_DATABASE: demo
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      CLUSTER_ID: demo-cluster-001
+    ports:
+      - "9092:9092"
+
+  # ====== Services ======
+  order-service:
+    build:
+      context: ../..
+      dockerfile: apps/order-service/Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+    environment:
+      DB_HOST: mysql
+      REDIS_HOST: redis
+      KAFKA_BROKER: kafka:9092
+
+  user-service:
+    build:
+      context: ../..
+      dockerfile: apps/user-service/Dockerfile
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql
+      - redis
+
+  gateway:
+    build:
+      context: ../..
+      dockerfile: apps/gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - order-service
+      - user-service
+
+volumes:
+  mysql_data:
