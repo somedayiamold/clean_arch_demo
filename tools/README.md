@@ -8,9 +8,10 @@
 tools/
 ├── codegen/      代码生成器（Proto → stub, ORM model 生成等）
 ├── linter/       自定义架构守护规则（如禁止 domain 导入 port/out）
-├── scripts/      开发辅助脚本（一键启动、格式化、依赖检查、affected-only 构建等）
 └── templates/    新服务脚手架模板
 ```
+
+开发辅助脚本（一键启动、格式化、依赖检查等）位于根目录 `scripts/`。
 
 ## 架构守护
 
